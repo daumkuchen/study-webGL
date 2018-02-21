@@ -19,8 +19,15 @@
       let y = event.clientY * 2.0 - h;
       x /= w;
       y /= h;
-      scene.position.x = -x * 2.0;
-      scene.position.y = y * 2.0;
+
+      // position
+      // scene.position.x = -x * 2.0;
+      // scene.position.y = y * 2.0;
+
+      // rotation
+      scene.rotation.x = y * 0.1;
+      scene.rotation.y = x * 0.1;
+
     }, false);
 
     // three.js class
