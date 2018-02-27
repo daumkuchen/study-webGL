@@ -1,0 +1,23 @@
+{
+  "name": "websGLchool_sample",
+  "version": "1.0.0",
+  "description": "webGLscool sample",
+  "main": "index.js",
+  "scripts": {
+    "start": "gulp",
+    "release": "gulp release",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "tsukasa",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "babel-preset-es2015": "6.24.1",
+    "babelify": "^7.3.0",
+    "gulp": "^3.9.1",
+    "gulp-util": "^3.0.6",
+    "stringify": "^5.1.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.7.0"
+  }
+}
