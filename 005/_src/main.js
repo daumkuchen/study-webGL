@@ -34,10 +34,11 @@
     // 　　CLASS
     // ==================================================
 
-    let mainVert = require('./../_shader/main.vert');
-    let mainFrag = require('./../_shader/main.frag');
-    let postVert = require('./../_shader/post.vert');
-    let postFrag = require('./../_shader/post.frag');
+    const mainVert = require('./../_shader/main.vert');
+    const mainFrag = require('./../_shader/main.frag');
+    const postVert = require('./../_shader/post.vert');
+    const postFrag = require('./../_shader/post.frag');
+    const Perlin = require('./../js/lib/perlin.js').Perlin;
 
     let renderer;
     let scene;
@@ -194,7 +195,7 @@
     camera.position.z = CAMERA_PARAMETER.z;
     camera.lookAt(CAMERA_PARAMETER.lookAt);
 
-    // controls = new THREE.OrbitControls(camera);
+    controls = new THREE.OrbitControls(camera);
 
     renderer = new THREE.WebGLRenderer({
       alpha: true,
@@ -221,7 +222,6 @@
       time: {
         type: 'f',
         value: 1.0
-        // value: 1.0
       }
     };
 
@@ -232,7 +232,7 @@
     // geometry = new THREE.SphereGeometry(100, 100, 100);
     // geometry = new THREE.PlaneBufferGeometry(2048, 1024, 32, 16);
     // geometry = new THREE.PlaneBufferGeometry(winWidth*2.0, winHeight, winWidth*0.02*2.0, winHeight*0.02);
-    geometry = new THREE.PlaneBufferGeometry(1024, 1024, 64, 64);
+    geometry = new THREE.PlaneBufferGeometry(2048, 2048, 512, 512);
 
     // geometry = new THREE.BufferGeometry();
     // let vertexPositions = [];
@@ -344,10 +344,30 @@
     // 　　MESH / GROUP
     // ==================================================
 
-    mesh = new THREE.Mesh(geometry, material);
+    mesh = new THREE.Points(geometry, material);
     // mesh.castShadow = true;
     // mesh.rotation.x = -1.0;
-    mesh.position.y = -10.0;
+
+    // ===== perlin noise on javascript
+    // let perlin = new Perlin();
+    // let peak = 60;
+    // let smoothing = 300;
+    // let vertices = mesh.geometry.attributes.position.array;
+    // for (var i = 0; i <= vertices.length; i += 3) {
+    //   vertices[i+2] = peak * perlin.noise(
+    //     (mesh.position.x + vertices[i] * (Math.random() * (1.0 - 0.98) + 0.98)) / (smoothing),
+    //     (mesh.position.z + vertices[i+1] * (Math.random() * (1.0 - 0.98) + 0.98)) / (smoothing)
+    //   );
+    // }
+    // mesh.geometry.attributes.position.needsUpdate = true;
+    // mesh.geometry.computeVertexNormals();
+    //
+    // //
+    // geometry.addAttribute('m_position',
+    //   new THREE.BufferAttribute(vertices, 3)
+    // );
+
+    mesh.position.y = -200.0;
     mesh.rotation.x = -Math.PI*0.5;
 
     // group = new THREE.Group();

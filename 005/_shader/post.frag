@@ -41,9 +41,9 @@ void main() {
   // vec4 R = texture2D(uTex, uv + vec2( 0.002 * sin(mouse.x * 10.0), 0.0));
   // vec4 G = texture2D(uTex, uv + vec2( 0.00  * cos(mouse.x * 10.0), 0.0));
   // vec4 B = texture2D(uTex, uv + vec2(-0.002 * sin(mouse.x * 10.0), 0.0));
-  vec4 R = texture2D(uTex, uv + vec2( 0.003 * sin(floor(mouse.x)), 0.0));
+  vec4 R = texture2D(uTex, uv + vec2( 0.01 * sin(floor(mouse.x)), 0.0));
   vec4 G = texture2D(uTex, uv + vec2( 0.00  * cos(floor(mouse.x)), 0.0));
-  vec4 B = texture2D(uTex, uv + vec2(-0.003 * sin(floor(mouse.x)), 0.0));
+  vec4 B = texture2D(uTex, uv + vec2(-0.01 * sin(floor(mouse.x)), 0.0));
   gl_FragColor = vec4(vec3(R.r, G.g, B.b), 1.0);
 
   // gl_FragColor = texture2D(uTex, uv);
