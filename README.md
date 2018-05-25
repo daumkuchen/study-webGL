@@ -8,3 +8,10 @@
 * 006 sound visualizer
 * 007 sound visualizer
 * 008 perlin noise + post effects
+* 009 gpgpu
+* 010 dat.gui
+* 011 bunny
+* 012 bunny
+* 013 sphere noise
+* 014 perlin noise
+* 015 texture
