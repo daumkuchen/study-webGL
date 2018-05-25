@@ -11,10 +11,10 @@
     // ==================================================
 
     // 頂点情報のシェーダー
-    const computeFrag = require('./../_shader/position.frag');
+    const positionFrag = require('./../_shader/position.frag');
 
     // 移動方向を決定するシェーダー
-    const computeVert = require('./../_shader/velocity.frag');
+    const velocityFrag = require('./../_shader/velocity.frag');
 
     // パーティクルを描写するためのシェーダー
     const perticleVert = require('./../_shader/perticle.vert');
@@ -67,9 +67,9 @@
       window.addEventListener('resize', onWindowResize, false);
 
       // ***** このコメントアウトについては後述 ***** //
-      //        effectController = {
-      //            time: 0.0,
-      //        };
+      // effectController = {
+      //   time: 0.0,
+      // };
 
       // gpuCopute用のRenderを作る
       initComputeRenderer();
@@ -93,21 +93,28 @@
       fillTextures(dtPosition, dtVelocity);
 
       // shaderプログラムのアタッチ
-      velocityVariable = gpuCompute.addVariable("textureVelocity", computeVert, dtVelocity);
-      positionVariable = gpuCompute.addVariable("texturePosition", computeFrag, dtPosition);
+      positionVariable = gpuCompute.addVariable('texturePosition', positionFrag, dtPosition);
+      velocityVariable = gpuCompute.addVariable('textureVelocity', velocityFrag, dtVelocity);
 
       // 一連の関係性を構築するためのおまじない
       gpuCompute.setVariableDependencies(velocityVariable, [positionVariable, velocityVariable]);
       gpuCompute.setVariableDependencies(positionVariable, [positionVariable, velocityVariable]);
 
       // uniform変数を登録したい場合は以下のように作る
-      /*
       positionUniforms = positionVariable.material.uniforms;
       velocityUniforms = velocityVariable.material.uniforms;
 
-      velocityUniforms.time = { value: 0.0 };
-      positionUniforms.time = { ValueB: 0.0 };
+      positionUniforms.time = {
+        type: 'f',
+        value: 0.0
+      };
 
+      velocityUniforms.time = {
+        type: 'f',
+        value: 0.0
+      };
+
+      /*
       ***********************************
       たとえば、上でコメントアウトしているeffectControllerオブジェクトのtimeを
       わたしてあげれば、effectController.timeを更新すればuniform変数も変わったり、ということができる
@@ -115,7 +122,6 @@
       ************************************
       */
 
-      // error処理
       let error = gpuCompute.init();
       if (error !== null) {
         console.error(error);
@@ -204,11 +210,16 @@
       // パーティクルの初期の位置は、ランダムなXZに平面おく。
       // 板状の正方形が描かれる
       for (let k = 0, kl = posArray.length; k < kl; k += 4) {
+
         // Position
         let x, y, z;
+        // x = Math.random() * 500 - 250;
+        // y = 0;
+        // z = Math.random() * 500 - 250;
         x = Math.random() * 500 - 250;
+        y = Math.random() * 10 - 5;
         z = Math.random() * 500 - 250;
-        y = 0;
+
         // posArrayの実態は一次元配列なので
         // x,y,z,wの順番に埋めていく。
         // wは今回は使用しないが、配列の順番などを埋めておくといろいろ使えて便利
@@ -219,11 +230,17 @@
 
         // 移動する方向はとりあえずランダムに決めてみる。
         // これでランダムな方向にとぶパーティクルが出来上がるはず。
-        velArray[k + 0] = Math.random() * 2 - 1;
-        velArray[k + 1] = Math.random() * 2 - 1;
-        velArray[k + 2] = Math.random() * 2 - 1;
-        velArray[k + 3] = Math.random() * 2 - 1;
+        velArray[k + 0] = Math.random() * 2.0 - 1.0;
+        velArray[k + 1] = Math.random() * 2.0 - 1.0;
+        velArray[k + 2] = Math.random() * 2.0 - 1.0;
+        velArray[k + 3] = Math.random() * 2.0 - 1.0;
+        // velArray[k + 0] = 0;
+        // velArray[k + 1] = 0;
+        // velArray[k + 2] = 0;
+        // velArray[k + 3] = 0;
+
       }
+
     }
 
     // カメラオブジェクトからシェーダーに渡したい情報を引っ張ってくる関数
@@ -242,12 +259,18 @@
     }
 
     let animate = () => {
-      requestAnimationFrame(animate);
       render();
       stats.update();
+      requestAnimationFrame(animate);
     }
 
     let render = () => {
+
+      // effectController.time += 0.05;
+      // velocityUniforms.time.value = effectController.time;
+
+      positionUniforms.time.value += 0.05;
+      velocityUniforms.time.value += 0.05;
 
       // 計算用のテクスチャを更新
       gpuCompute.compute();
@@ -256,7 +279,6 @@
       particleUniforms.texturePosition.value = gpuCompute.getCurrentRenderTarget(positionVariable).texture;
       particleUniforms.textureVelocity.value = gpuCompute.getCurrentRenderTarget(velocityVariable).texture;
       renderer.render(scene, camera);
-
     }
 
     init();

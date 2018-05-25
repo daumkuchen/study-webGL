@@ -7,15 +7,27 @@ precision mediump float;
 
 // uniform vec2 resolution;
 // uniform vec2 mouse;
-// uniform float time;
+uniform float time;
 //
 // uniform sampler2D texturePosition;
 // uniform sampler2D textureVelocity;
 
 void main(void) {
+
   vec2 uv = gl_FragCoord.xy / resolution.xy;
-  float idParticle = uv.y * resolution.x + uv.x;
+
   vec4 tmpVel = texture2D(textureVelocity, uv);
-  vec3 vel = tmpVel.xyz;
-  gl_FragColor = vec4(vel.xyz, 1.0);
+  // float idParticle = uv.y * resolution.x + uv.x;
+
+  // default
+  // vec3 vel = tmpVel.xyz;
+  // gl_FragColor = vec4(vel.xyz, 1.0);
+
+  // using glsl
+  float posX = tmpVel.x;
+  float posY = tmpVel.y;
+  float posZ = tmpVel.z;
+  vec3 pos = vec3(posX, posY, posZ);
+  gl_FragColor = vec4(pos, 1.0);
+
 }

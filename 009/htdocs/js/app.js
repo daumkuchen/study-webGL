@@ -8,7 +8,7 @@ module.exports = "// uniform vec2 resolution;\n// uniform vec2 mouse;\n// unifor
 module.exports = "precision mediump float;\n\n// uniform vec2 resolution;\n// uniform vec2 mouse;\n// uniform float time;\n//\n// uniform sampler2D texturePosition;\n// uniform sampler2D textureVelocity;\n\n// 現在の位置情報を決定する\n#define delta (1.0 / 60.0)\n\nvoid main(void) {\n\n  vec2 uv = gl_FragCoord.xy / resolution.xy;\n  vec4 tmpPos = texture2D(texturePosition, uv);\n  vec3 pos = tmpPos.xyz;\n  vec4 tmpVel = texture2D(textureVelocity, uv);\n\n  // velが移動する方向(もう一つ下のcomputeShaderVelocityを参照)\n  vec3 vel = tmpVel.xyz;\n\n  // 移動する方向に速度を掛け合わせた数値を現在地に加える。\n  pos += vel * delta;\n\n  gl_FragColor = vec4(pos, 1.0);\n}\n";
 
 },{}],4:[function(require,module,exports){
-module.exports = "precision mediump float;\n\n// 移動方向についていろいろ計算できるシェーダー。\n// 今回はなにもしてない。\n// ここでVelのx y zについて情報を上書きすると、それに応じて移動方向が変わる\n// #include <common>\n\n// uniform vec2 resolution;\n// uniform vec2 mouse;\n// uniform float time;\n//\n// uniform sampler2D texturePosition;\n// uniform sampler2D textureVelocity;\n\nvoid main(void) {\n  vec2 uv = gl_FragCoord.xy / resolution.xy;\n  float idParticle = uv.y * resolution.x + uv.x;\n  vec4 tmpVel = texture2D(textureVelocity, uv);\n  vec3 vel = tmpVel.xyz;\n  gl_FragColor = vec4(vel.xyz, 1.0);\n}\n";
+module.exports = "precision mediump float;\n\n// 移動方向についていろいろ計算できるシェーダー。\n// 今回はなにもしてない。\n// ここでVelのx y zについて情報を上書きすると、それに応じて移動方向が変わる\n// #include <common>\n\n// uniform vec2 resolution;\n// uniform vec2 mouse;\nuniform float time;\n//\n// uniform sampler2D texturePosition;\n// uniform sampler2D textureVelocity;\n\nvoid main(void) {\n\n  vec2 uv = gl_FragCoord.xy / resolution.xy;\n\n  vec4 tmpVel = texture2D(textureVelocity, uv);\n  // float idParticle = uv.y * resolution.x + uv.x;\n\n  // default\n  // vec3 vel = tmpVel.xyz;\n  // gl_FragColor = vec4(vel.xyz, 1.0);\n\n  // using glsl\n  float posX = tmpVel.x;\n  float posY = tmpVel.y;\n  float posZ = tmpVel.z;\n  vec3 pos = vec3(posX, posY, posZ);\n  gl_FragColor = vec4(pos, 1.0);\n\n}\n";
 
 },{}],5:[function(require,module,exports){
 'use strict';
@@ -26,10 +26,10 @@ module.exports = "precision mediump float;\n\n// 移動方向についていろ�
     // ==================================================
 
     // 頂点情報のシェーダー
-    var computeFrag = require('./../_shader/position.frag');
+    var positionFrag = require('./../_shader/position.frag');
 
     // 移動方向を決定するシェーダー
-    var computeVert = require('./../_shader/velocity.frag');
+    var velocityFrag = require('./../_shader/velocity.frag');
 
     // パーティクルを描写するためのシェーダー
     var perticleVert = require('./../_shader/perticle.vert');
@@ -87,9 +87,9 @@ module.exports = "precision mediump float;\n\n// 移動方向についていろ�
       window.addEventListener('resize', onWindowResize, false);
 
       // ***** このコメントアウトについては後述 ***** //
-      //        effectController = {
-      //            time: 0.0,
-      //        };
+      // effectController = {
+      //   time: 0.0,
+      // };
 
       // gpuCopute用のRenderを作る
       initComputeRenderer();
@@ -112,27 +112,35 @@ module.exports = "precision mediump float;\n\n// 移動方向についていろ�
       fillTextures(dtPosition, dtVelocity);
 
       // shaderプログラムのアタッチ
-      velocityVariable = gpuCompute.addVariable("textureVelocity", computeVert, dtVelocity);
-      positionVariable = gpuCompute.addVariable("texturePosition", computeFrag, dtPosition);
+      positionVariable = gpuCompute.addVariable('texturePosition', positionFrag, dtPosition);
+      velocityVariable = gpuCompute.addVariable('textureVelocity', velocityFrag, dtVelocity);
 
       // 一連の関係性を構築するためのおまじない
       gpuCompute.setVariableDependencies(velocityVariable, [positionVariable, velocityVariable]);
       gpuCompute.setVariableDependencies(positionVariable, [positionVariable, velocityVariable]);
 
       // uniform変数を登録したい場合は以下のように作る
-      /*
       positionUniforms = positionVariable.material.uniforms;
       velocityUniforms = velocityVariable.material.uniforms;
-       velocityUniforms.time = { value: 0.0 };
-      positionUniforms.time = { ValueB: 0.0 };
-       ***********************************
+
+      positionUniforms.time = {
+        type: 'f',
+        value: 0.0
+      };
+
+      velocityUniforms.time = {
+        type: 'f',
+        value: 0.0
+      };
+
+      /*
+      ***********************************
       たとえば、上でコメントアウトしているeffectControllerオブジェクトのtimeを
       わたしてあげれば、effectController.timeを更新すればuniform変数も変わったり、ということができる
       velocityUniforms.time = { value: effectController.time };
       ************************************
       */
 
-      // error処理
       var error = gpuCompute.init();
       if (error !== null) {
         console.error(error);
@@ -220,13 +228,18 @@ module.exports = "precision mediump float;\n\n// 移動方向についていろ�
       // パーティクルの初期の位置は、ランダムなXZに平面おく。
       // 板状の正方形が描かれる
       for (var k = 0, kl = posArray.length; k < kl; k += 4) {
+
         // Position
         var x = void 0,
             y = void 0,
             z = void 0;
+        // x = Math.random() * 500 - 250;
+        // y = 0;
+        // z = Math.random() * 500 - 250;
         x = Math.random() * 500 - 250;
+        y = Math.random() * 10 - 5;
         z = Math.random() * 500 - 250;
-        y = 0;
+
         // posArrayの実態は一次元配列なので
         // x,y,z,wの順番に埋めていく。
         // wは今回は使用しないが、配列の順番などを埋めておくといろいろ使えて便利
@@ -237,10 +250,14 @@ module.exports = "precision mediump float;\n\n// 移動方向についていろ�
 
         // 移動する方向はとりあえずランダムに決めてみる。
         // これでランダムな方向にとぶパーティクルが出来上がるはず。
-        velArray[k + 0] = Math.random() * 2 - 1;
-        velArray[k + 1] = Math.random() * 2 - 1;
-        velArray[k + 2] = Math.random() * 2 - 1;
-        velArray[k + 3] = Math.random() * 2 - 1;
+        velArray[k + 0] = Math.random() * 2.0 - 1.0;
+        velArray[k + 1] = Math.random() * 2.0 - 1.0;
+        velArray[k + 2] = Math.random() * 2.0 - 1.0;
+        velArray[k + 3] = Math.random() * 2.0 - 1.0;
+        // velArray[k + 0] = 0;
+        // velArray[k + 1] = 0;
+        // velArray[k + 2] = 0;
+        // velArray[k + 3] = 0;
       }
     };
 
@@ -260,12 +277,18 @@ module.exports = "precision mediump float;\n\n// 移動方向についていろ�
     };
 
     var animate = function animate() {
-      requestAnimationFrame(animate);
       render();
       stats.update();
+      requestAnimationFrame(animate);
     };
 
     var render = function render() {
+
+      // effectController.time += 0.05;
+      // velocityUniforms.time.value = effectController.time;
+
+      positionUniforms.time.value += 0.05;
+      velocityUniforms.time.value += 0.05;
 
       // 計算用のテクスチャを更新
       gpuCompute.compute();
