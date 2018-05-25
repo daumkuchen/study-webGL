@@ -10,12 +10,17 @@
     // 　　CLASS
     // ==================================================
 
-    const computeVert = require('./../_shader/compute.vert');
-    const computeFrag = require('./../_shader/compute.frag');
+    // 頂点情報のシェーダー
+    const computeFrag = require('./../_shader/position.frag');
+
+    // 移動方向を決定するシェーダー
+    const computeVert = require('./../_shader/velocity.frag');
+
+    // パーティクルを描写するためのシェーダー
     const perticleVert = require('./../_shader/perticle.vert');
     const perticleFrag = require('./../_shader/perticle.frag');
 
-    const w = 500;
+    const w = 512;
     const perticles = w * w;
 
     // メモリ負荷確認用
@@ -35,9 +40,8 @@
 
     let init = () => {
 
-      // 一般的なThree.jsにおける定義部分
-      container = document.createElement('div');
-      document.body.appendChild(container);
+      // ===== renderer, camera
+      container = document.getElementById('canvas');
       camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 5, 15000);
       camera.position.y = 120;
       camera.position.z = 200;
@@ -47,8 +51,11 @@
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.setSize(window.innerWidth, window.innerHeight);
       container.appendChild(renderer.domElement);
+
+      // ===== controls
       controls = new THREE.OrbitControls(camera, renderer.domElement);
 
+      // ===== stats
       stats = new Stats();
       // container.appendChild(stats.dom);
       stats.setMode(0);
@@ -64,7 +71,7 @@
       //            time: 0.0,
       //        };
 
-      // ①gpuCopute用のRenderを作る
+      // gpuCopute用のRenderを作る
       initComputeRenderer();
 
       // ②particle 初期化
@@ -72,7 +79,7 @@
 
     }
 
-    // ①gpuCopute用のRenderを作る
+    // gpuCopute用のRenderを作る
     let initComputeRenderer = () => {
 
       // gpgpuオブジェクトのインスタンスを格納
@@ -100,6 +107,7 @@
 
       velocityUniforms.time = { value: 0.0 };
       positionUniforms.time = { ValueB: 0.0 };
+
       ***********************************
       たとえば、上でコメントアウトしているeffectControllerオブジェクトのtimeを
       わたしてあげれば、effectController.timeを更新すればuniform変数も変わったり、ということができる
@@ -112,6 +120,7 @@
       if (error !== null) {
         console.error(error);
       }
+
     }
 
     // restart用関数 今回は使わない
@@ -125,7 +134,7 @@
       gpuCompute.renderTexture(dtVelocity, velocityVariable.renderTargets[1]);
     }
 
-    // ②パーティクルそのものの情報を決めていく。
+    // パーティクルそのものの情報を決めていく。
     let initPosition = () => {
 
       // 最終的に計算された結果を反映するためのオブジェクト。
@@ -176,6 +185,7 @@
         fragmentShader: perticleFrag
       });
       material.extensions.drawBuffers = true;
+
       let particles = new THREE.Points(geometry, material);
       particles.matrixAutoUpdate = false;
       particles.updateMatrix();
@@ -184,6 +194,7 @@
       scene.add(particles);
     }
 
+    // テクスチャ定義?
     let fillTextures = (texturePosition, textureVelocity) => {
 
       // textureのイメージデータをいったん取り出す
@@ -192,7 +203,6 @@
 
       // パーティクルの初期の位置は、ランダムなXZに平面おく。
       // 板状の正方形が描かれる
-
       for (let k = 0, kl = posArray.length; k < kl; k += 4) {
         // Position
         let x, y, z;
@@ -246,6 +256,7 @@
       particleUniforms.texturePosition.value = gpuCompute.getCurrentRenderTarget(positionVariable).texture;
       particleUniforms.textureVelocity.value = gpuCompute.getCurrentRenderTarget(velocityVariable).texture;
       renderer.render(scene, camera);
+
     }
 
     init();
