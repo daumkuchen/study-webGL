@@ -65,8 +65,8 @@ module.exports = "precision mediump float;\n\n// 移動方向についていろ�
       // ===== renderer, camera
       container = document.getElementById('canvas');
       camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 5, 15000);
-      camera.position.y = 120;
-      camera.position.z = 200;
+      camera.position.y = 50;
+      camera.position.z = 100;
       scene = new THREE.Scene();
       renderer = new THREE.WebGLRenderer();
       renderer.setClearColor(0x000000);
@@ -220,6 +220,7 @@ module.exports = "precision mediump float;\n\n// 移動方向についていろ�
       material.extensions.drawBuffers = true;
 
       var particles = new THREE.Points(geometry, material);
+
       particles.matrixAutoUpdate = false;
       particles.updateMatrix();
 
@@ -285,24 +286,31 @@ module.exports = "precision mediump float;\n\n// 移動方向についていろ�
 
       var tween = new TimelineMax();
 
-      for (var k = 0, kl = posArray.length; k < kl; k += 4) {
+      for (var k = 0, kl = posArray.length; k < kl; k += 40) {
 
         var x = void 0,
             y = void 0,
             z = void 0;
-        x = Math.random() * 500 - 250;
-        y = Math.random() * 500 - 250;
-        z = Math.random() * 500 - 250;
+        // x = Math.random() * 500 - 250;
+        // y = Math.random() * 500 - 250;
+        // z = Math.random() * 500 - 250;
+        x = Math.random() * 50 - 25;
+        y = Math.random() * 50 - 25;
+        z = Math.random() * 50 - 25;
 
         posArray[k + 0] = x;
         posArray[k + 1] = y;
         posArray[k + 2] = z;
         posArray[k + 3] = 0;
 
-        velArray[k + 0] = Math.random() * 2.0 - 1.0;
-        velArray[k + 1] = Math.random() * 2.0 - 1.0;
-        velArray[k + 2] = Math.random() * 2.0 - 1.0;
-        velArray[k + 3] = Math.random() * 2.0 - 1.0;
+        // velArray[k + 0] = Math.random() * 2.0 - 1.0;
+        // velArray[k + 1] = Math.random() * 2.0 - 1.0;
+        // velArray[k + 2] = Math.random() * 2.0 - 1.0;
+        // velArray[k + 3] = Math.random() * 2.0 - 1.0;
+        velArray[k + 0] = Math.random() * 512.0 - 256.0;
+        velArray[k + 1] = Math.random() * 512.0 - 256.0;
+        velArray[k + 2] = Math.random() * 512.0 - 256.0;
+        velArray[k + 3] = Math.random() * 512.0 - 256.0;
       }
       gpuCompute.renderTexture(dtPosition, positionVariable.renderTargets[0]);
       gpuCompute.renderTexture(dtPosition, positionVariable.renderTargets[1]);
