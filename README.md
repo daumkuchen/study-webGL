@@ -17,3 +17,5 @@
 * 014 perlin noise
 * 015 texture
 * 016 gpgpu
+* 017 gpgpu
+* 018 cubemap
