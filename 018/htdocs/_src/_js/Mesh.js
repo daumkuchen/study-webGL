@@ -3,31 +3,39 @@ const OBJLoader = require('three-obj-loader')(THREE);
 
 export default class Mesh {
   constructor() {
-    // this.object = this.createObject();
     this.object = null;
   }
-  loadObject() {
+  createObject(cubeTexture) {
 
     const loader = new THREE.OBJLoader();
-    loader.load('../img/common/bunny.obj',(object) => {
-      object.traverse(function(object) {
+    const path = './img/common/bunny.obj';
+    loader.load(path, (object) => {
+      object.traverse((object) => {
         if(object instanceof THREE.Mesh) {
-          object.material = THREE.MeshPhongMaterial({
-            color:0xffffff
+          object.material = new THREE.MeshPhongMaterial({
+            color: 0xffffff,
+            side: THREE.DoubleSide,
+            specular: 0x999999,
+            shininess: 30,
+            envMap: cubeTexture,
+            refractionRatio: 0.98,
+            reflectivity: 1
           });
-          this.object = object;
-          this.flg = true;
         }
+        object.position.y = -0.5;
+        object.rotation.y = -Math.PI * 0.9;
       });
+      // this.scene.add(object);
+      this.object = object;
+    },
+    function(xhr) {
+      console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+    },
+    function(error) {
+      console.log('An error happened');
     });
-
-    // function(xhr) {
-    //   console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-    // },
-    // function(error) {
-    //   console.log('An error happened');
-    // });
   }
+
   // createObject() {
   //
   //   return new THREE.Mesh(
@@ -41,4 +49,5 @@ export default class Mesh {
   //   );
   //
   // }
+
 }

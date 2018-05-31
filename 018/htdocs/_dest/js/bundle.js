@@ -11,9 +11,83 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var THREE = require('three/build/three.js');
 var OBJLoader = require('three-obj-loader')(THREE);
+
+var Mesh = function () {
+  function Mesh() {
+    _classCallCheck(this, Mesh);
+
+    this.object = null;
+  }
+
+  _createClass(Mesh, [{
+    key: 'createObject',
+    value: function createObject(cubeTexture) {
+      var _this = this;
+
+      var loader = new THREE.OBJLoader();
+      var path = './img/common/bunny.obj';
+      loader.load(path, function (object) {
+        object.traverse(function (object) {
+          if (object instanceof THREE.Mesh) {
+            object.material = new THREE.MeshPhongMaterial({
+              color: 0xffffff,
+              side: THREE.DoubleSide,
+              specular: 0x999999,
+              shininess: 30,
+              envMap: cubeTexture,
+              refractionRatio: 0.98,
+              reflectivity: 1
+            });
+          }
+          object.position.y = -0.5;
+          object.rotation.y = -Math.PI * 0.9;
+        });
+        // this.scene.add(object);
+        _this.object = object;
+      }, function (xhr) {
+        console.log(xhr.loaded / xhr.total * 100 + '% loaded');
+      }, function (error) {
+        console.log('An error happened');
+      });
+    }
+
+    // createObject() {
+    //
+    //   return new THREE.Mesh(
+    //     // new THREE.SphereGeometry(2.0, 128.0, 128.0),
+    //     this.geometry,
+    //     new THREE.MeshPhongMaterial({
+    //       color:0xffffff,
+    //     	specular: 0x999999,
+    //     	shininess: 30
+    //     })
+    //   );
+    //
+    // }
+
+  }]);
+
+  return Mesh;
+}();
+
+exports.default = Mesh;
+
+},{"three-obj-loader":7,"three/build/three.js":9}],2:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var THREE = require('three/build/three.js');
+var OBJLoader = require('three-obj-loader')(THREE);
 var OrbitControls = require('three-orbit-controls')(THREE);
 
-// const Mesh = require('./Mesh').default;
+var Mesh = require('./Mesh').default;
 var Post = require('./Post').default;
 
 var Model = function () {
@@ -164,17 +238,26 @@ var Model = function () {
       // this.mesh.object.castShadow = true;
       // this.scene.add(this.mesh.object);
 
-      var path = './img/common/sky/';
-      var urls = [path + 'px.jpg', path + 'nx.jpg', path + 'py.jpg', path + 'ny.jpg', path + 'pz.jpg', path + 'nz.jpg'];
+      // load cubetexture
+      var path = ['./img/common/sky/' + 'px.jpg', './img/common/sky/' + 'nx.jpg', './img/common/sky/' + 'py.jpg', './img/common/sky/' + 'ny.jpg', './img/common/sky/' + 'pz.jpg', './img/common/sky/' + 'nz.jpg'];
       var cubeLoader = new THREE.CubeTextureLoader();
-      cubeLoader.load(urls, function (cubeTexture) {
+
+      // texture読み込み後の処理
+      cubeLoader.load(path, function (cubeTexture) {
 
         // scene背景
         _this.scene.background = cubeTexture;
 
         // モデルのmaterial
+        // this.mesh = new Mesh;
+        // this.mesh.createObject(cubeTexture);
+        // setTimeout(() => {
+        //   this.scene.add(this.mesh.object);
+        // }, 1000);
+
         var loader = new THREE.OBJLoader();
-        loader.load('./img/common/bunny.obj', function (object) {
+        var path = './img/common/bunny.obj';
+        loader.load(path, function (object) {
           object.traverse(function (object) {
             if (object instanceof THREE.Mesh) {
               object.material = new THREE.MeshPhongMaterial({
@@ -256,7 +339,7 @@ var Model = function () {
 
 exports.default = Model;
 
-},{"./Post":2,"three-obj-loader":6,"three-orbit-controls":7,"three/build/three.js":8}],2:[function(require,module,exports){
+},{"./Mesh":1,"./Post":3,"three-obj-loader":7,"three-orbit-controls":8,"three/build/three.js":9}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -313,7 +396,7 @@ var Post = function () {
 
 exports.default = Post;
 
-},{"./../_shader/post.frag":4,"./../_shader/post.vert":5,"three/build/three.js":8}],3:[function(require,module,exports){
+},{"./../_shader/post.frag":5,"./../_shader/post.vert":6,"three/build/three.js":9}],4:[function(require,module,exports){
 'use strict';
 
 var Model = require('./Model').default;
@@ -331,13 +414,13 @@ var Model = require('./Model').default;
   init();
 })();
 
-},{"./Model":1}],4:[function(require,module,exports){
+},{"./Model":2}],5:[function(require,module,exports){
 module.exports = "precision highp float;\n\nuniform vec2 resolution;\nuniform vec2 mouse;\nuniform float time;\nuniform sampler2D texture;\nvarying vec2 vUv;\n\n// normal rad\nfloat rnd(vec2 n){\n  return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);\n}\n\nvoid main() {\n\n  vec2 p = (gl_FragCoord.st / resolution) * 2.0 - 1.0;\n\n  // vec2 ratio = vec2(\n  //   min((resolution.x / resolution.y) / (resolution.x / resolution.y), 1.0),\n  //   min((resolution.y / resolution.x) / (resolution.y / resolution.x), 1.0)\n  // );\n\n  // vec2 uv = vec2(\n  //   vUv.x * ratio.x + (1.0 - ratio.x) * 0.5,\n  //   vUv.y * ratio.y + (1.0 - ratio.y) * 0.5\n  // );\n\n  // 乗算?\n  // vec4 color = vec4(1.0, 0.0, 1.0, 1.0);\n  // gl_FragColor = texture2D(texture, uv) * color;\n\n  // ===== color dest\n  // vec4 destColor = texture2D(texture, uv);\n  // vec4 R = texture2D(texture, uv + vec2( 0.01, 0.0));\n  // vec4 G = texture2D(texture, uv + vec2( 0.00, 0.0));\n  // vec4 B = texture2D(texture, uv + vec2(-0.01, 0.0));\n  // gl_FragColor = vec4(vec3(R.r, G.g, B.b), 1.0);\n\n  // ===== vignette\n  vec4 samplerColor = texture2D(texture, vUv);\n  float dest = (samplerColor.r + samplerColor.g + samplerColor.b);\n\n  // float vignette = 1.0 - length(p) * 0.5;\n  // dest *= vignette * 0.5 + 0.5;\n\n  // ===== white noise\n  // float noise = rnd(gl_FragCoord.st);\n  // dest *= noise * 1.0 + 0.5;\n\n  // gl_FragColor = samplerColor * vec4(vec3(dest), 1.0);\n\n  // ===== default\n  gl_FragColor = texture2D(texture, vUv);\n\n}\n";
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 module.exports = "varying vec2 vUv;\n\nvoid main() {\n  vUv = uv;\n  gl_Position = vec4(position, 1.0);\n}\n";
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 function defaultOnError(err) {
@@ -1003,7 +1086,7 @@ module.exports = function (THREE) {
 
   };
 };
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 module.exports = function( THREE ) {
 	/**
 	 * @author qiao / https://github.com/qiao
@@ -2025,7 +2108,7 @@ module.exports = function( THREE ) {
 	return OrbitControls;
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -48292,4 +48375,4 @@ module.exports = function( THREE ) {
 
 })));
 
-},{}]},{},[3]);
+},{}]},{},[4]);

@@ -2,7 +2,7 @@ const THREE = require('three/build/three.js');
 const OBJLoader = require('three-obj-loader')(THREE);
 const OrbitControls = require('three-orbit-controls')(THREE);
 
-// const Mesh = require('./Mesh').default;
+const Mesh = require('./Mesh').default;
 const Post = require('./Post').default;
 
 export default class Model {
@@ -142,24 +142,33 @@ export default class Model {
     // this.mesh.object.castShadow = true;
     // this.scene.add(this.mesh.object);
 
-    const path = './img/common/sky/';
-    const urls = [
-      path + 'px.jpg',
-      path + 'nx.jpg',
-      path + 'py.jpg',
-      path + 'ny.jpg',
-      path + 'pz.jpg',
-      path + 'nz.jpg'
+    // load cubetexture
+    const path = [
+      './img/common/sky/' + 'px.jpg',
+      './img/common/sky/' + 'nx.jpg',
+      './img/common/sky/' + 'py.jpg',
+      './img/common/sky/' + 'ny.jpg',
+      './img/common/sky/' + 'pz.jpg',
+      './img/common/sky/' + 'nz.jpg'
     ];
     const cubeLoader = new THREE.CubeTextureLoader();
-    cubeLoader.load(urls, (cubeTexture) => {
+
+    // texture読み込み後の処理
+    cubeLoader.load(path, (cubeTexture) => {
 
       // scene背景
       this.scene.background = cubeTexture;
 
       // モデルのmaterial
+      // this.mesh = new Mesh;
+      // this.mesh.createObject(cubeTexture);
+      // setTimeout(() => {
+      //   this.scene.add(this.mesh.object);
+      // }, 1000);
+
       const loader = new THREE.OBJLoader();
-      loader.load('./img/common/bunny.obj',(object) => {
+      const path = './img/common/bunny.obj';
+      loader.load(path,(object) => {
         object.traverse((object) => {
           if(object instanceof THREE.Mesh) {
             object.material = new THREE.MeshPhongMaterial({
