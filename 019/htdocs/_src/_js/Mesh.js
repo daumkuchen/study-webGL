@@ -42,19 +42,18 @@ export default class Mesh {
           //   shininess: 30
           // });
           // object.geometry = new THREE.BufferGeometry();
-          object.material = new THREE.ShaderMaterial({
-            uniforms: this.uniforms,
-            vertexShader: mainVert,
-            fragmentShader: mainFrag,
-            transparent: true,
-
-            // uniforms: uniforms,
-            // vertexShader: phongShader.vertexShader,
-            // fragmentShader: phongShader.fragmentShader,
-            // vertexShader: mainVert,
-            // fragmentShader: mainFrag,
-            // lights: true
-          });
+          // object.material = new THREE.ShaderMaterial({
+          //   uniforms: this.uniforms,
+          //   vertexShader: mainVert,
+          //   fragmentShader: mainFrag,
+          //   transparent: true,
+          //   // uniforms: uniforms,
+          //   // vertexShader: phongShader.vertexShader,
+          //   // fragmentShader: phongShader.fragmentShader,
+          //   // vertexShader: mainVert,
+          //   // fragmentShader: mainFrag,
+          //   // lights: true
+          // });
         }
         object.position.y = -8.0;
         object.rotation.y = -Math.PI * 0.0;

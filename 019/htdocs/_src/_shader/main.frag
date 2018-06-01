@@ -6,8 +6,8 @@ uniform vec2 resolution;
 uniform vec2 mouse;
 uniform float time;
 
-varying vec3 vNormal;
-varying vec4 nMatrix;
+// varying vec3 vNormal;
+// varying vec4 nMatrix;
 const vec3 lightDirection = normalize(vec3(1.0, 1.0, 1.0));
 
 void main(void) {

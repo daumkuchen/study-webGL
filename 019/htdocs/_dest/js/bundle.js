@@ -59,19 +59,18 @@ var Mesh = function () {
             //   shininess: 30
             // });
             // object.geometry = new THREE.BufferGeometry();
-            object.material = new THREE.ShaderMaterial({
-              uniforms: _this.uniforms,
-              vertexShader: mainVert,
-              fragmentShader: mainFrag,
-              transparent: true
-
-              // uniforms: uniforms,
-              // vertexShader: phongShader.vertexShader,
-              // fragmentShader: phongShader.fragmentShader,
-              // vertexShader: mainVert,
-              // fragmentShader: mainFrag,
-              // lights: true
-            });
+            // object.material = new THREE.ShaderMaterial({
+            //   uniforms: this.uniforms,
+            //   vertexShader: mainVert,
+            //   fragmentShader: mainFrag,
+            //   transparent: true,
+            //   // uniforms: uniforms,
+            //   // vertexShader: phongShader.vertexShader,
+            //   // fragmentShader: phongShader.fragmentShader,
+            //   // vertexShader: mainVert,
+            //   // fragmentShader: mainFrag,
+            //   // lights: true
+            // });
           }
           object.position.y = -8.0;
           object.rotation.y = -Math.PI * 0.0;
@@ -388,7 +387,7 @@ var Model = require('./Model').default;
 })();
 
 },{"./Model":2}],5:[function(require,module,exports){
-module.exports = "#ifdef GL_ES\nprecision mediump float;\n#endif\n\nuniform vec2 resolution;\nuniform vec2 mouse;\nuniform float time;\n\nvarying vec3 vNormal;\nvarying vec4 nMatrix;\nconst vec3 lightDirection = normalize(vec3(1.0, 1.0, 1.0));\n\nvoid main(void) {\n\n  // vec3 n = (nMatrix * vec4(vNormal, 0.0)).xyz;\n  //\n  // float diffuse = max(dot(n, lightDirection), 0.0);\n  // float shade = 1.0;\n  //\n  // // 拡散光の強度を少ない階調に制限する @@@\n  // if(diffuse < 0.1){\n  //   shade = 0.5;\n  // } else if(diffuse < 0.3) {\n  //   shade = 0.7;\n  // } else if(diffuse < 0.7) {\n  //   shade = 0.9;\n  // }\n  //\n  // vec2 color = vec3(1.0);\n\n  // gl_FragColor = vec4(color * shade, 1.0);\n\n  gl_FragColor = vec4(1.0);\n\n  // vec2 p = gl_FragCoord.xy / resolution.xy;\n  // vec3 color = 0.5 - 0.5 * cos(time + p.xyx + vec3(0, 2, 4));\n\t// gl_FragColor = vec4(color, 1.0);\n\n}\n";
+module.exports = "#ifdef GL_ES\nprecision mediump float;\n#endif\n\nuniform vec2 resolution;\nuniform vec2 mouse;\nuniform float time;\n\n// varying vec3 vNormal;\n// varying vec4 nMatrix;\nconst vec3 lightDirection = normalize(vec3(1.0, 1.0, 1.0));\n\nvoid main(void) {\n\n  // vec3 n = (nMatrix * vec4(vNormal, 0.0)).xyz;\n  //\n  // float diffuse = max(dot(n, lightDirection), 0.0);\n  // float shade = 1.0;\n  //\n  // // 拡散光の強度を少ない階調に制限する @@@\n  // if(diffuse < 0.1){\n  //   shade = 0.5;\n  // } else if(diffuse < 0.3) {\n  //   shade = 0.7;\n  // } else if(diffuse < 0.7) {\n  //   shade = 0.9;\n  // }\n  //\n  // vec2 color = vec3(1.0);\n\n  // gl_FragColor = vec4(color * shade, 1.0);\n\n  gl_FragColor = vec4(1.0);\n\n  // vec2 p = gl_FragCoord.xy / resolution.xy;\n  // vec3 color = 0.5 - 0.5 * cos(time + p.xyx + vec3(0, 2, 4));\n\t// gl_FragColor = vec4(color, 1.0);\n\n}\n";
 
 },{}],6:[function(require,module,exports){
 module.exports = "#ifdef GL_ES\nprecision mediump float;\n#endif\n\nuniform vec2 resolution;\nuniform vec2 mouse;\nuniform float time;\n\n// attribute vec3 normal;\n// uniform mat3 normalMatrix;\n// varying vec3 vNormal;\n// varying vec4 nMatrix;\n\nvoid main(void) {\n\n  // vNormal = normal;\n  // nMatrix = normalMatrix;\n\n  gl_Position = normalMatrix * projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n\n}\n";
