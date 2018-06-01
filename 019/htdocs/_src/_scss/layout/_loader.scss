@@ -1,0 +1,20 @@
+.l-loader {
+  position: fixed;
+  z-index: 500;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  opacity: 1;
+  > div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -15px 0 0 -15px;
+    width: 30px;
+    height: 30px;
+    background-color: #000;
+    border-radius: 100%;
+  }
+}
