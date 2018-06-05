@@ -20,3 +20,4 @@
 * 017 gpgpu
 * 018 cubemap
 * 019 phong
+* 020 SVGLoader

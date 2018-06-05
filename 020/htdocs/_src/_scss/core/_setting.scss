@@ -1,0 +1,73 @@
+@charset "UTF-8";
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+　　PATH
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+// usage: #{$imgPath}
+$imgPath: "/img/";
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+　　COLOR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+$bg: #fff;
+$color__01: #000;
+$color__02: #000;
+$color__03: #000;
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+　　FONT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+$fontsize__01: 14px;
+$lineheight__01: 1;
+
+$gfont__opensans: 'Open Sans', sans-serif;
+$gfont__raleway: 'Raleway', sans-serif;
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+　　COLOR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+$blue__01: #344956;
+$blue__02: #0066a2;
+$gray__01: #f5f5f5;
+$gray__02: #cbd0d3;
+$gray__03: #141414;
+$gray__04: #1d1d1d;
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+　　LAYOUT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+// $columnwidth__01: 1240px;
+// $columnwidth__02: 1020px;
+
+$gridwidth__PC: 75px;
+$gridwidth__SP: 3vw;
+
+$breakpoint__max--01: "screen and (max-width: 768px)";
+$breakpoint__max--02: "screen and (max-width: 600px)";
+$breakpoint__min--01: "screen and (min-width: 1800px)";
+$breakpoint__min--02: "screen and (min-width: 769px)";
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+　　EASING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+$cubric__easein: cubic-bezier(0.420, 0.000, 1.000, 1.000);
+$cubric__easeout: cubic-bezier(0.000, 0.000, 0.580, 1.000);
+$cubric__easeinout: cubic-bezier(0.420, 0.000, 0.580, 1.000);
+
+$cubric__inexpo: cubic-bezier(0.950, 0.050, 0.795, 0.035);
+$cubric__outexpo: cubic-bezier(0.190, 1.000, 0.220, 1.000);
+$cubric__inoutexpo: cubic-bezier(1.000, 0.000, 0.000, 1.000);
+
+$cubric__incirc: cubic-bezier(0.600, 0.040, 0.980, 0.335);
+$cubric__outcirc: cubic-bezier(0.075, 0.820, 0.165, 1.000);
+$cubric__inoutcirc: cubic-bezier(0.785, 0.135, 0.150, 0.860);
+
+$cubric__inback: cubic-bezier(0.600, -0.280, 0.735, 0.045);
+$cubric__outback: cubic-bezier(0.175, 0.885, 0.320, 1);
+$cubric__inoutback: cubic-bezier(0.680, 0, 0.265, 1);

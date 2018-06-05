@@ -1,0 +1,63 @@
+*::-moz-selection {
+  background: #f0dc28;
+  color: #fff;
+}
+
+*::selection {
+  background: #f0dc28;
+  color: #fff;
+}
+
+body {
+  font-family: 'Roboto', arial, sans-serif;
+  // font-family: YakuHanJP, "游ゴシック", "Yu Gothic", YuGothic, "ヒラギノ角ゴシック Pro", "Hiragino Kaku Gothic Pro", "メイリオ", "Meiryo", "Osaka", "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+  // font-family: YakuHanJP, "Noto Sans", "Noto Sans CJK JP", "游ゴシック", "Yu Gothic", "ヒラギノ角ゴシック Pro", "Hiragino Kaku Gothic Pro", "メイリオ", "Meiryo", "Osaka", "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #000;
+  text-align: left;
+  line-height: 1;
+  letter-spacing: 0;
+  background: #fff;
+  // overflow-x: hidden;
+  -webkit-font-feature-settings: "palt";
+  font-feature-settings: "palt";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  min-height: 100vh;
+}
+
+a {
+  color: #000;
+  text-decoration: none;
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: #fff;
+  font-family: YakuHanJP, "游ゴシック", "Yu Gothic", YuGothic, "ヒラギノ角ゴシック Pro", "Hiragino Kaku Gothic Pro", "メイリオ", "Meiryo", "Osaka", "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+}
+
+input:-moz-placeholder,
+textarea:-moz-placeholder {
+  color: #fff;
+  font-family: YakuHanJP, "游ゴシック", "Yu Gothic", YuGothic, "ヒラギノ角ゴシック Pro", "Hiragino Kaku Gothic Pro", "メイリオ", "Meiryo", "Osaka", "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+}
+
+input::-moz-placeholder,
+textarea::-moz-placeholder {
+  color: #fff;
+  font-family: YakuHanJP, "游ゴシック", "Yu Gothic", YuGothic, "ヒラギノ角ゴシック Pro", "Hiragino Kaku Gothic Pro", "メイリオ", "Meiryo", "Osaka", "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+}
+
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+  color: #fff;
+  font-family: YakuHanJP, "游ゴシック", "Yu Gothic", YuGothic, "ヒラギノ角ゴシック Pro", "Hiragino Kaku Gothic Pro", "メイリオ", "Meiryo", "Osaka", "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+}
+
+input[type="submit"]::-webkit-search-decoration,
+input[type="button"]::-webkit-search-decoration {
+  display: none;
+}
