@@ -1,0 +1,19 @@
+@font-face {
+  font-family: "YakuHanJP";
+  font-style: normal;
+  font-weight: 200;
+  src: url("https://cdn.jsdelivr.net/npm/yakuhanjp@2.0.0/dist/fonts/YakuHanJP/YakuHanJP-Light.eot");
+  src: url("https://cdn.jsdelivr.net/npm/yakuhanjp@2.0.0/dist/fonts/YakuHanJP/YakuHanJP-Light.woff2") format("woff2"), url("https://cdn.jsdelivr.net/npm/yakuhanjp@2.0.0/dist/fonts/YakuHanJP/YakuHanJP-Light.woff") format("woff");
+  font-display: swap;
+}
+
+@import url('https://fonts.googleapis.com/css?family=Lora:400,700');
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+// @font-face {
+//   font-family: "NotoSansCJKjp";
+//   font-style: normal;
+//   font-weight: 200;
+//   src: url("../font/NotoSansCJKjp.eot");
+//   src: local("Noto Sans CJK JP Light"), url("../font/NotoSansCJKjp.eot?#iefix") format("embedded-opentype"), url("../font/NotoSansCJKjp.woff") format("woff"), url("../font/NotoSansCJKjp.otf") format("opentype");
+// }
