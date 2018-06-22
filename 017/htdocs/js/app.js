@@ -1,8 +1,8 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = "precision mediump float;\n\nuniform vec2 resolution;\nuniform vec2 mouse;\nuniform float time;\n\nvoid main(void) {\n\n  // 丸い形に色をぬるための計算\n  // float f = length(gl_PointCoord - vec2(0.5, 0.5));\n  // if (f > 0.1) {\n  //   discard;\n  // }\n\n  // vec2 uv = gl_FragCoord.xy / resolution.xy;\n  // vec3 color = 0.5 + 0.5 * cos((time * 1.0) + uv.xyx + vec3(0.0, 2.0, 4.0));\n  // gl_FragColor = vec4(color, 1.0);\n\n  vec3 color = vec3(1.0, 1.0, 1.0);\n  gl_FragColor = vec4(color, 1.0);\n}\n";
+module.exports = "precision mediump float;\n\nuniform vec2 resolution;\nuniform vec2 mouse;\nuniform float time;\n\nvoid main(void) {\n\n  // 丸い形に色をぬるための計算\n  float f = length(gl_PointCoord - vec2(0.5, 0.5));\n  if (f > 0.1) {\n    discard;\n  }\n\n  // gradient\n  // vec2 uv = gl_FragCoord.xy / resolution.xy;\n  // vec3 color = 0.5 + 0.5 * cos((time * 1.0) + uv.xyx + vec3(0.0, 2.0, 4.0));\n  // gl_FragColor = vec4(color, 1.0);\n\n  // white\n  vec3 color = vec3(1.0, 1.0, 1.0);\n  gl_FragColor = vec4(color, 1.0);\n}\n";
 
 },{}],2:[function(require,module,exports){
-module.exports = "precision mediump float;\n\nuniform vec2 resolution;\nuniform vec2 mouse;\nuniform float time;\n\nuniform sampler2D texturePosition;\nuniform float cameraConstant;\nuniform float density;\nvarying vec2 vUv;\nuniform float radius;\n\nvoid main(void) {\n\n  vec4 posTemp = texture2D(texturePosition, uv);\n  vec3 pos = posTemp.xyz;\n\n  vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);\n\n  // ポイントのサイズを決定\n  // gl_PointSize = 0.5 * cameraConstant / (- mvPosition.z);\n\n  // uv情報の引き渡し\n  vUv = uv;\n\n  // 変換して格納\n  gl_Position = projectionMatrix * mvPosition;\n}\n";
+module.exports = "precision mediump float;\n\nuniform vec2 resolution;\nuniform vec2 mouse;\nuniform float time;\n\nuniform sampler2D texturePosition;\nuniform float cameraConstant;\nuniform float density;\nvarying vec2 vUv;\nuniform float radius;\n\nvoid main(void) {\n\n  vec4 posTemp = texture2D(texturePosition, uv);\n  vec3 pos = posTemp.xyz;\n\n  vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);\n\n  // ポイントのサイズを決定\n  gl_PointSize = 0.5 * cameraConstant / (- mvPosition.z);\n\n  // uv情報の引き渡し\n  vUv = uv;\n\n  // 変換して格納\n  gl_Position = projectionMatrix * mvPosition;\n}\n";
 
 },{}],3:[function(require,module,exports){
 module.exports = "precision mediump float;\n\n// uniform vec2 resolution;\n// uniform vec2 mouse;\n// uniform float time;\n//\n// uniform sampler2D texturePosition;\n// uniform sampler2D textureVelocity;\n\n// 現在の位置情報を決定する\n#define delta (1.0 / 60.0)\n\nvoid main(void) {\n\n  vec2 uv = gl_FragCoord.xy / resolution.xy;\n  vec4 tmpPos = texture2D(texturePosition, uv);\n  vec3 pos = tmpPos.xyz;\n  vec4 tmpVel = texture2D(textureVelocity, uv);\n\n  // velが移動する方向(もう一つ下のcomputeShaderVelocityを参照)\n  vec3 vel = tmpVel.xyz;\n\n  // 移動する方向に速度を掛け合わせた数値を現在地に加える。\n  pos += vel * delta;\n\n  gl_FragColor = vec4(pos, 1.0);\n}\n";
@@ -89,13 +89,13 @@ module.exports = "precision mediump float;\n\n// 移動方向についていろ�
 
       window.addEventListener('resize', onWindowResize, false);
       window.addEventListener('mousemove', onMouseMove, false);
-      window.addEventListener('click', onRestart, false);
+      // window.addEventListener('click', onRestart, false);
 
-      // document.onkeydown = () => {
-      //   if (event.keyCode == 13) {
-      //     onRestart();
-      //   }
-      // }
+      document.onkeydown = function () {
+        if (event.keyCode == 13) {
+          onRestart();
+        }
+      };
 
       // ***** このコメントアウトについては後述 ***** //
       // effectController = {
@@ -243,7 +243,7 @@ module.exports = "precision mediump float;\n\n// 移動方向についていろ�
 
       material.extensions.drawBuffers = true;
 
-      var mesh = new THREE.Mesh(geometry, material);
+      var mesh = new THREE.Points(geometry, material);
 
       mesh.matrixAutoUpdate = false;
       mesh.updateMatrix();
@@ -344,10 +344,10 @@ module.exports = "precision mediump float;\n\n// 移動方向についていろ�
         // velArray[k + 1] = Math.random() * 2.0 - 1.0;
         // velArray[k + 2] = Math.random() * 2.0 - 1.0;
         // velArray[k + 3] = Math.random() * 2.0 - 1.0;
-        velArray[k + 0] = Math.random() * 512.0 - 256.0;
-        velArray[k + 1] = Math.random() * 512.0 - 256.0;
-        velArray[k + 2] = Math.random() * 512.0 - 256.0;
-        velArray[k + 3] = Math.random() * 512.0 - 256.0;
+        velArray[k + 0] = Math.random() * 1024.0 - 516;
+        velArray[k + 1] = Math.random() * 1024.0 - 516;
+        velArray[k + 2] = Math.random() * 1024.0 - 516;
+        velArray[k + 3] = Math.random() * 1024.0 - 516;
       }
       gpuCompute.renderTexture(dtPosition, positionVariable.renderTargets[0]);
       gpuCompute.renderTexture(dtPosition, positionVariable.renderTargets[1]);

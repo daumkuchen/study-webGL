@@ -68,13 +68,13 @@
 
       window.addEventListener('resize', onWindowResize, false);
       window.addEventListener('mousemove', onMouseMove, false);
-      window.addEventListener('click', onRestart, false);
+      // window.addEventListener('click', onRestart, false);
 
-      // document.onkeydown = () => {
-      //   if (event.keyCode == 13) {
-      //     onRestart();
-      //   }
-      // }
+      document.onkeydown = () => {
+        if (event.keyCode == 13) {
+          onRestart();
+        }
+      }
 
       // ***** このコメントアウトについては後述 ***** //
       // effectController = {
@@ -230,7 +230,7 @@
 
       material.extensions.drawBuffers = true;
 
-      let mesh = new THREE.Mesh(geometry, material);
+      let mesh = new THREE.Points(geometry, material);
 
       mesh.matrixAutoUpdate = false;
       mesh.updateMatrix();
@@ -329,10 +329,10 @@
         // velArray[k + 1] = Math.random() * 2.0 - 1.0;
         // velArray[k + 2] = Math.random() * 2.0 - 1.0;
         // velArray[k + 3] = Math.random() * 2.0 - 1.0;
-        velArray[k + 0] = Math.random() * 512.0 - 256.0;
-        velArray[k + 1] = Math.random() * 512.0 - 256.0;
-        velArray[k + 2] = Math.random() * 512.0 - 256.0;
-        velArray[k + 3] = Math.random() * 512.0 - 256.0;
+        velArray[k + 0] = Math.random() * 1024.0 - 516;
+        velArray[k + 1] = Math.random() * 1024.0 - 516;
+        velArray[k + 2] = Math.random() * 1024.0 - 516;
+        velArray[k + 3] = Math.random() * 1024.0 - 516;
 
       }
       gpuCompute.renderTexture(dtPosition, positionVariable.renderTargets[0]);
@@ -368,6 +368,7 @@
       particleUniforms.texturePosition.value = gpuCompute.getCurrentRenderTarget(positionVariable).texture;
       particleUniforms.textureVelocity.value = gpuCompute.getCurrentRenderTarget(velocityVariable).texture;
       renderer.render(scene, camera);
+
     }
 
     init();
