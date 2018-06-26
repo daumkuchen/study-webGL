@@ -22,3 +22,6 @@
 * 019 phong
 * 020 SVGLoader
 * 021 wave
+* 022 flat shading
+* 023 RawWebGL distortion effect
+* 024 instancing
