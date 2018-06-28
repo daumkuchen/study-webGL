@@ -16,10 +16,19 @@ void main(){
   float px = position.x;
   float py = position.y;
   float pz = position.z;
-  vec3 p = vec3(px, py, pz);
+
+  float sx = sin(float(position.yz) * time * 20.0) * 0.005;
+  float sy = sin(float(position.xz) * time * 20.0) * 0.005;
+  float sz = sin(float(position.xy) * time * 20.0) * 0.005;
+
+  vec3 p = vec3(px + sx, py + sy, pz + sz);
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
 
-  float z = abs(position.z + 1.0) * 10.0;
-  gl_PointSize = z;
+  // z.position
+  // float z = abs(position.z + 1.0) * 10.0;
+  // gl_PointSize = z;
+
+  // default
+  gl_PointSize = 10.0;
 }
