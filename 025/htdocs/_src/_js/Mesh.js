@@ -18,7 +18,7 @@ export default class Mesh {
   }
   createObject() {
 
-    const num = 5000;
+    const num = 100000;
 
     const geometry = new THREE.BufferGeometry();
 
@@ -28,6 +28,8 @@ export default class Mesh {
         // positions.push( 1.0, -1.0, 0.0);
         // positions.push( 1.0,  1.0, 0.0);
         // positions.push(-1.0,  1.0, 0.0);
+
+    let normals = [];
 
     for (var i = 0; i < num; i++) {
       positions.push(
@@ -51,9 +53,20 @@ export default class Mesh {
     //   2, 3, 0
     // ]);
 
+    function faceNormal(v0, v1, v2){
+      var n = new Array();
+      var vec1 = [v1[0] - v0[0], v1[1] - v0[1], v1[2] - v0[2]];
+      var vec2 = [v2[0] - v0[0], v2[1] - v0[1], v2[2] - v0[2]];
+      n[0] = vec1[1] * vec2[2] - vec1[2] * vec2[1];
+      n[1] = vec1[2] * vec2[0] - vec1[0] * vec2[2];
+      n[2] = vec1[0] * vec2[1] - vec1[1] * vec2[0];
+      return n;
+    }
+
     // 頂点座標、インデックスを送る
     geometry.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     // geometry.addAttribute('index', new THREE.BufferAttribute(indices,  1));
+    // geometry.addAttribute('normal', new THREE.BufferAttribute(normals,  1));
 
     const material = new THREE.RawShaderMaterial({
       uniforms: this.uniforms,

@@ -34,7 +34,7 @@ var Mesh = function () {
     key: 'createObject',
     value: function createObject() {
 
-      var num = 5000;
+      var num = 100000;
 
       var geometry = new THREE.BufferGeometry();
 
@@ -44,6 +44,8 @@ var Mesh = function () {
       // positions.push( 1.0, -1.0, 0.0);
       // positions.push( 1.0,  1.0, 0.0);
       // positions.push(-1.0,  1.0, 0.0);
+
+      var normals = [];
 
       for (var i = 0; i < num; i++) {
         positions.push(Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0);
@@ -63,9 +65,20 @@ var Mesh = function () {
       //   2, 3, 0
       // ]);
 
+      function faceNormal(v0, v1, v2) {
+        var n = new Array();
+        var vec1 = [v1[0] - v0[0], v1[1] - v0[1], v1[2] - v0[2]];
+        var vec2 = [v2[0] - v0[0], v2[1] - v0[1], v2[2] - v0[2]];
+        n[0] = vec1[1] * vec2[2] - vec1[2] * vec2[1];
+        n[1] = vec1[2] * vec2[0] - vec1[0] * vec2[2];
+        n[2] = vec1[0] * vec2[1] - vec1[1] * vec2[0];
+        return n;
+      }
+
       // 頂点座標、インデックスを送る
       geometry.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
       // geometry.addAttribute('index', new THREE.BufferAttribute(indices,  1));
+      // geometry.addAttribute('normal', new THREE.BufferAttribute(normals,  1));
 
       var material = new THREE.RawShaderMaterial({
         uniforms: this.uniforms,
@@ -189,7 +202,7 @@ var Sample = function () {
       far: 5000.0,
       x: 0.0,
       y: 0.0,
-      z: 5.0,
+      z: 4.0,
       lookAt: new THREE.Vector3(0.0, 0.0, 0.0)
     };
     this.count = null;
@@ -1313,10 +1326,10 @@ var Sample = require('./Sample').default;
 })();
 
 },{"./Sample":3,"gsap":10}],6:[function(require,module,exports){
-module.exports = "precision highp float;\n\nuniform float time;\n\nvarying vec3 vPosition;\n\nvoid main() {\n\n\tfloat f = length(gl_PointCoord - vec2(0.5, 0.5));\n\tif (f > 0.5) {\n\t\tdiscard;\n\t}\n\n\t// vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);\n\n\t// float p = float(-vPosition.z);\n  // vec4 color = vec4(vec3(1.0, p, 1.0), 1.0);\n\n\tvec4 color = vec4(vec3(vPosition), 1.0);\n\n\tgl_FragColor = color;\n}\n";
+module.exports = "precision highp float;\n\nuniform float time;\n\nvarying vec3 vPosition;\n\nvoid main() {\n\n\tfloat f = length(gl_PointCoord - vec2(0.5, 0.5));\n\tif (f > 0.5) {\n\t\tdiscard;\n\t}\n\n\t// vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);\n\n\t// float p = float(-vPosition.z);\n  // vec4 color = vec4(vec3(1.0, p, 1.0), 1.0);\n\n\t// vec4 color = vec4(vec3(vPosition), 1.0);\n\tvec4 color = vec4(vec3(1.0), 1.0);\n\n\tgl_FragColor = color;\n}\n";
 
 },{}],7:[function(require,module,exports){
-module.exports = "precision highp float;\n\nuniform float time;\nuniform vec2 resolution;\n\nuniform mat4 modelViewMatrix;\nuniform mat4 projectionMatrix;\n\nattribute vec3 position;\n\nvarying vec3 vPosition;\n\nvoid main(){\n  vPosition = position;\n\n  float px = position.x;\n  float py = position.y;\n  float pz = position.z;\n\n  float sx = sin(float(position.yz) * time * 20.0) * 0.005;\n  float sy = sin(float(position.xz) * time * 20.0) * 0.005;\n  float sz = sin(float(position.xy) * time * 20.0) * 0.005;\n\n  vec3 p = vec3(px + sx, py + sy, pz + sz);\n\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);\n\n  // z.position\n  // float z = abs(position.z + 1.0) * 10.0;\n  // gl_PointSize = z;\n\n  // default\n  gl_PointSize = 10.0;\n}\n";
+module.exports = "precision highp float;\n\nuniform float time;\nuniform vec2 resolution;\n\nuniform mat4 modelViewMatrix;\nuniform mat4 projectionMatrix;\n\nattribute vec3 position;\nvarying vec3 vPosition;\n\n\nvec3 mod289(vec3 x) {\n  return x - floor(x * (1.0 / 289.0)) * 289.0;\n}\n\nvec4 mod289(vec4 x) {\n  return x - floor(x * (1.0 / 289.0)) * 289.0;\n}\n\nvec4 permute(vec4 x) {\n  return mod289(((x*34.0)+1.0)*x);\n}\n\nvec4 taylorInvSqrt(vec4 r) {\n  return 1.79284291400159 - 0.85373472095314 * r;\n}\n\nfloat snoise(vec3 v) {\n  const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;\n  const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);\n\n// First corner\n  vec3 i  = floor(v + dot(v, C.yyy) );\n  vec3 x0 =   v - i + dot(i, C.xxx) ;\n\n// Other corners\n  vec3 g = step(x0.yzx, x0.xyz);\n  vec3 l = 1.0 - g;\n  vec3 i1 = min( g.xyz, l.zxy );\n  vec3 i2 = max( g.xyz, l.zxy );\n\n  //   x0 = x0 - 0.0 + 0.0 * C.xxx;\n  //   x1 = x0 - i1  + 1.0 * C.xxx;\n  //   x2 = x0 - i2  + 2.0 * C.xxx;\n  //   x3 = x0 - 1.0 + 3.0 * C.xxx;\n  vec3 x1 = x0 - i1 + C.xxx;\n  vec3 x2 = x0 - i2 + C.yyy; // 2.0*C.x = 1/3 = C.y\n  vec3 x3 = x0 - D.yyy;      // -1.0+3.0*C.x = -0.5 = -D.y\n\n// Permutations\n  i = mod289(i);\n  vec4 p = permute( permute( permute(\n             i.z + vec4(0.0, i1.z, i2.z, 1.0 ))\n           + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))\n           + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));\n\n// Gradients: 7x7 points over a square, mapped onto an octahedron.\n// The ring size 17*17 = 289 is close to a multiple of 49 (49*6 = 294)\n  float n_ = 0.142857142857; // 1.0/7.0\n  vec3  ns = n_ * D.wyz - D.xzx;\n\n  vec4 j = p - 49.0 * floor(p * ns.z * ns.z);  //  mod(p,7*7)\n\n  vec4 x_ = floor(j * ns.z);\n  vec4 y_ = floor(j - 7.0 * x_ );    // mod(j,N)\n\n  vec4 x = x_ *ns.x + ns.yyyy;\n  vec4 y = y_ *ns.x + ns.yyyy;\n  vec4 h = 1.0 - abs(x) - abs(y);\n\n  vec4 b0 = vec4( x.xy, y.xy );\n  vec4 b1 = vec4( x.zw, y.zw );\n\n  //vec4 s0 = vec4(lessThan(b0,0.0))*2.0 - 1.0;\n  //vec4 s1 = vec4(lessThan(b1,0.0))*2.0 - 1.0;\n  vec4 s0 = floor(b0)*2.0 + 1.0;\n  vec4 s1 = floor(b1)*2.0 + 1.0;\n  vec4 sh = -step(h, vec4(0.0));\n\n  vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;\n  vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;\n\n  vec3 p0 = vec3(a0.xy,h.x);\n  vec3 p1 = vec3(a0.zw,h.y);\n  vec3 p2 = vec3(a1.xy,h.z);\n  vec3 p3 = vec3(a1.zw,h.w);\n\n//Normalise gradients\n  vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));\n  p0 *= norm.x;\n  p1 *= norm.y;\n  p2 *= norm.z;\n  p3 *= norm.w;\n\n// Mix final noise value\n  vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);\n  m = m * m;\n  return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1),\n                                dot(p2,x2), dot(p3,x3) ) );\n}\n\nvec3 snoiseVec3( vec3 x ){\n  float s  = snoise(vec3(x));\n  float s1 = snoise(vec3(x.y - 19.1 , x.z + 33.4 , x.x + 47.2));\n  float s2 = snoise(vec3(x.z + 74.2 , x.x - 124.5 , x.y + 99.4));\n  vec3 c = vec3(s , s1 , s2);\n  return c;\n}\n\n\nvec3 curlNoise( vec3 p ){\n\n  const float e = .1;\n  vec3 dx = vec3( e   , 0.0 , 0.0 );\n  vec3 dy = vec3( 0.0 , e   , 0.0 );\n  vec3 dz = vec3( 0.0 , 0.0 , e   );\n\n  vec3 p_x0 = snoiseVec3( p - dx );\n  vec3 p_x1 = snoiseVec3( p + dx );\n  vec3 p_y0 = snoiseVec3( p - dy );\n  vec3 p_y1 = snoiseVec3( p + dy );\n  vec3 p_z0 = snoiseVec3( p - dz );\n  vec3 p_z1 = snoiseVec3( p + dz );\n\n  float x = p_y1.z - p_y0.z - p_z1.y + p_z0.y;\n  float y = p_z1.x - p_z0.x - p_x1.z + p_x0.z;\n  float z = p_x1.y - p_x0.y - p_y1.x + p_y0.x;\n\n  const float divisor = 1.0 / ( 2.0 * e );\n  return normalize( vec3( x , y , z ) * divisor );\n\n}\n\nvoid main(){\n  vPosition = position;\n\n  float px = position.x;\n  float py = position.y;\n  float pz = position.z;\n\n  float sx = sin(float(position.yz) * time * 20.0) * 0.005;\n  float sy = sin(float(position.xz) * time * 20.0) * 0.005;\n  float sz = sin(float(position.xy) * time * 20.0) * 0.005;\n\n  vec3 p = vec3(px + sx, py + sy, pz + sz);\n\n  // gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);\n\n  // curl\n  // https://github.com/cabbibo/glsl-curl-noise\n\n  // floorかけたらlineだけになった\n  // vec3 curl = curlNoise(floor(position) + reflect(float(position), 1.0) + (time * 0.2));\n\n  vec3 curl = curlNoise(fract(position) + reflect(float(position), 1.0) + (time * 0.2));\n\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(curl, 1.0);\n\n  // z.position\n  // float z = abs(position.z + 1.0) * 10.0;\n  // gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n  // gl_PointSize = z;\n\n  // default\n  gl_PointSize = 1.0;\n}\n";
 
 },{}],8:[function(require,module,exports){
 module.exports = "#ifdef GL_ES\nprecision mediump float;\n#endif\n\nuniform vec2 resolution;\nuniform vec2 mouse;\nuniform float time;\nuniform sampler2D texture;\nvarying vec2 vUv;\n\nfloat rnd(vec2 n) {\n\treturn fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);\n}\n\nvoid main(void) {\n\n  vec2 p = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);\n\n  vec4 samplerColor = texture2D(texture, vUv);\n  vec3 color = vec3(1.0);\n       color.r = 0.0;\n\n  // gl_FragColor = samplerColor * vec4(vec3(color), 1.0);\n\tgl_FragColor = samplerColor;\n}\n";
