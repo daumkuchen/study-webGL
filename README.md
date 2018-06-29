@@ -25,4 +25,5 @@
 * 022 flat shading
 * 023 RawWebGL distortion effect
 * 024 instancing
-* 025 transform feedback
+* 025 curl noise
+* 026 transform feedback
