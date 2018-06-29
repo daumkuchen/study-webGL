@@ -158,10 +158,10 @@ void main(){
   gl_Position = projectionMatrix * modelViewMatrix * vec4(curl, 1.0);
 
   // z.position
-  // float z = abs(position.z + 1.0) * 10.0;
-  // gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-  // gl_PointSize = z;
+  // float point = sin(curl.y + 1.0) * 2.0;
+  // gl_PointSize = point;
 
   // default
+  // gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   gl_PointSize = 1.0;
 }

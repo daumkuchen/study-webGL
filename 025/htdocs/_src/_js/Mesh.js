@@ -18,7 +18,7 @@ export default class Mesh {
   }
   createObject() {
 
-    const num = 100000;
+    const num = 500000;
 
     const geometry = new THREE.BufferGeometry();
 

@@ -32,7 +32,7 @@ export default class Sample {
       far: 5000.0,
       x: 0.0,
       y: 0.0,
-      z: 4.0,
+      z: 2.5,
       lookAt: new THREE.Vector3(0.0, 0.0, 0.0)
     };
     this.count = null;
