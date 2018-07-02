@@ -15,6 +15,7 @@
     "babelify": "^8.0.0",
     "browser-sync": "^2.24.4",
     "browserify": "^16.2.2",
+    "dat.gui": "^0.7.2",
     "gulp": "^3.9.1",
     "gulp-babel": "^7.0.1",
     "gulp-notify": "^3.2.0",

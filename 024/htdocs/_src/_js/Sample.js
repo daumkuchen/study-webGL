@@ -124,7 +124,7 @@ export default class Sample {
     this.mesh.uniforms.sineTime.value = Math.sin(this.mesh.uniforms.time.value * 0.05);
     this.post.uniforms.time.value += 0.05;
 
-    // this.mesh.object.rotation.y = this.count * 0.005;
+    this.mesh.object.rotation.y = this.count * 0.005;
 
     requestAnimationFrame(this.animation.bind(this));
   }
