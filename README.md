@@ -27,3 +27,6 @@
 * 024 instancing
 * 025 curl noise
 * 026 transform feedback
+* 027 curl noise
+* 028 bunny
+* 029 paelin noise
