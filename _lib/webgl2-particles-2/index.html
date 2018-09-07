@@ -281,7 +281,7 @@
           var fontLoader = new THREE.FontLoader();
           fontLoader.load( 'media/fonts/helvetiker_bold.typeface.json', function ( font ) {
 
-            var textGeo = new THREE.TextGeometry( "WebGL 2", {
+            var textGeo = new THREE.TextGeometry( "NASA", {
               size: 1.0,
               height: 0.25,
               curveSegments: 0,
@@ -291,6 +291,7 @@
             });
 
             textGeo.computeBoundingBox();
+
             var bounds = textGeo.boundingBox;
             textGeo.applyMatrix( new THREE.Matrix4().makeTranslation(
               (bounds.max.x - bounds.min.x) * -0.5,
@@ -327,6 +328,7 @@
             geometry.addAttribute( 'position', new THREE.BufferAttribute( data, 4 ).setDynamic( true ) );
             geometry.addAttribute( 'velocity', new THREE.BufferAttribute( velData, 4 ).setDynamic( true ) );
             geometry.addAttribute( 'randomSeed', new THREE.BufferAttribute( randomSeedData, 1, false, true ).setDynamic( true ) );
+
             geometry2 = geometry.clone();
 
             material = new THREE.ShaderMaterial( {
@@ -353,7 +355,9 @@
             mesh = new THREE.Points(geometry, material);
             mesh.position.z = -roomSize.z*0.25;
             mesh.position.y = roomSize.y/2;
+
             // Should probably be linked to the room size somehow.
+
             mesh.scale.set(textScale, textScale, textScale);
             scene.add(mesh);
 

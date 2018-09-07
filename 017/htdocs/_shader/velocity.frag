@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 
 // 移動方向についていろいろ計算できるシェーダー。
 // 今回はなにもしてない。
@@ -8,7 +8,7 @@ precision mediump float;
 // uniform vec2 resolution;
 // uniform vec2 mouse;
 uniform float time;
-//
+
 // uniform sampler2D texturePosition;
 // uniform sampler2D textureVelocity;
 
@@ -28,6 +28,6 @@ void main(void) {
   float posY = tmpVel.y;
   float posZ = tmpVel.z;
   vec3 pos = vec3(posX, posY, posZ);
-  gl_FragColor = vec4(pos, 1.0);
+  gl_FragColor = vec4(pos, 1.);
 
 }

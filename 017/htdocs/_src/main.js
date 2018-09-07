@@ -1,4 +1,15 @@
+// 頂点情報のシェーダー
+import positionFrag from './../_shader/position.frag';
+
+// 移動方向を決定するシェーダー
+import velocityFrag from './../_shader/velocity.frag';
+
+// パーティクルを描写するためのシェーダー
+import perticleVert from './../_shader/perticle.vert';
+import perticleFrag from './../_shader/perticle.frag';
+
 (() => {
+
 
   // ==================================================
   // 　　MAIN
@@ -6,41 +17,53 @@
 
   window.addEventListener('load', function() {
 
+
     // ==================================================
     // 　　CLASS
     // ==================================================
 
-    // 頂点情報のシェーダー
-    const positionFrag = require('./../_shader/position.frag');
-
-    // 移動方向を決定するシェーダー
-    const velocityFrag = require('./../_shader/velocity.frag');
-
-    // パーティクルを描写するためのシェーダー
-    const perticleVert = require('./../_shader/perticle.vert');
-    const perticleFrag = require('./../_shader/perticle.frag');
-
-    const w = 512;
+    const w = 500;
     const perticles = w * w;
 
-    // メモリ負荷確認用
+    let container;
+    let camera;
+    let scene;
+    let renderer;
+    let geometry;
+    let material;
+    let controls;
     let stats;
 
-    // 基本セット
-    let container, camera, scene, renderer, geometry, material, controls;
-
-    // gpgpuをするために必要なオブジェクト達
+    // gpgpuインスタンス
     let gpuCompute;
+
+    //
     let velocityVariable;
+
+    //
     let positionVariable;
+
+    // 座標系・ユニフォーム変数
     let positionUniforms;
+
+    // 移動値・ユニフォーム変数
     let velocityUniforms;
+
+    // パーティクル・ユニフォーム変数
     let particleUniforms;
-    let effectController;
+
+    //
+    // let effectController;
 
     let count = 0;
 
-    let init = () => {
+
+
+    // ==================================================
+
+
+
+    function init() {
 
       // ===== renderer, camera
       container = document.getElementById('canvas');
@@ -68,8 +91,8 @@
 
       window.addEventListener('resize', onWindowResize, false);
       window.addEventListener('mousemove', onMouseMove, false);
-      // window.addEventListener('click', onRestart, false);
 
+      // window.addEventListener('click', onRestart, false);
       document.onkeydown = () => {
         if (event.keyCode == 13) {
           onRestart();
@@ -85,16 +108,22 @@
       initComputeRenderer();
 
       // particle 初期化
-      initPosition();
+      createMesh();
 
-      // uniforms
+      // uniforms resolution
       particleUniforms.resolution.value.x = renderer.domElement.width;
       particleUniforms.resolution.value.y = renderer.domElement.height;
 
     }
 
+
+
+    // ==================================================
+
+
+
     // gpuCopute用のRenderを作る
-    let initComputeRenderer = () => {
+    function initComputeRenderer() {
 
       // gpgpuオブジェクトのインスタンスを格納
       gpuCompute = new GPUComputationRenderer(w, w, renderer);
@@ -143,26 +172,43 @@
 
     }
 
-    // restart用関数 今回は使わない
-    let restartSimulation = () => {
-      let dtPosition = gpuCompute.createTexture();
-      let dtVelocity = gpuCompute.createTexture();
-      fillTextures(dtPosition, dtVelocity);
-      gpuCompute.renderTexture(dtPosition, positionVariable.renderTargets[0]);
-      gpuCompute.renderTexture(dtPosition, positionVariable.renderTargets[1]);
-      gpuCompute.renderTexture(dtVelocity, velocityVariable.renderTargets[0]);
-      gpuCompute.renderTexture(dtVelocity, velocityVariable.renderTargets[1]);
+    // テクスチャ定義
+    function fillTextures(texturePosition, textureVelocity) {
+
+      // textureのイメージデータをいったん取り出す
+      let posArray = texturePosition.image.data;
+      let velArray = textureVelocity.image.data;
+
+      // パーティクルの初期の位置は、ランダムなXZに平面おく。
+      // 板状の正方形が描かれる
+      for (let k = 0, kl = posArray.length; k < kl; k += 4) {
+
+        let x = Math.random() * 50 - 25;
+        let y = Math.random() * 50 - 25;
+        let z = Math.random() * 50 - 25;
+
+        posArray[k + 0] = x;
+        posArray[k + 1] = y;
+        posArray[k + 2] = z;
+        posArray[k + 3] = 0;
+
+        velArray[k + 0] = 0;
+        velArray[k + 1] = 0;
+        velArray[k + 2] = 0;
+        velArray[k + 3] = 0;
+
+      }
+
     }
 
     // パーティクルそのものの情報を決めていく。
-    let initPosition = () => {
+    function createMesh() {
 
       // 最終的に計算された結果を反映するためのオブジェクト。
       // 位置情報はShader側(texturePosition, textureVelocity)
       // で決定されるので、以下のように適当にうめちゃってOK
 
       geometry = new THREE.BufferGeometry();
-      // geometry = new THREE.BoxBufferGeometry(100.0, 100.0, 100.0);
 
       let positions = new Float32Array(perticles * 3);
       let p1 = 0;
@@ -187,6 +233,7 @@
         'position',
         new THREE.BufferAttribute(positions, 3)
       );
+
       geometry.addAttribute(
         'uv',
         new THREE.BufferAttribute(uvs, 2)
@@ -218,69 +265,94 @@
         }
       };
 
-      // Shaderマテリアル
-      // これはパーティクルそのものの描写に必要なシェーダー
       material = new THREE.ShaderMaterial({
         uniforms: particleUniforms,
         vertexShader: perticleVert,
-        fragmentShader: perticleFrag,
-        wireframe: true
-        // side: THREE.DoubleSide
+        fragmentShader: perticleFrag
       });
 
-      material.extensions.drawBuffers = true;
+      // material.extensions.drawBuffers = true;
 
-      let mesh = new THREE.Points(geometry, material);
+      // let mesh = new THREE.Points(geometry, material);
+        let mesh = new THREE.Points(geometry, material);
 
-      mesh.matrixAutoUpdate = false;
-      mesh.updateMatrix();
+      // mesh.matrixAutoUpdate = false;
+      // mesh.updateMatrix();
 
-      // パーティクルをシーンに追加
       scene.add(mesh);
     }
 
-    // テクスチャ定義?
-    let fillTextures = (texturePosition, textureVelocity) => {
+    // カメラオブジェクトからシェーダーに渡したい情報を引っ張ってくる関数
+    // カメラからパーティクルがどれだけ離れてるかを計算し、パーティクルの大きさを決定するため。
+    function getCameraConstant(camera) {
 
-      // textureのイメージデータをいったん取り出す
-      let posArray = texturePosition.image.data;
-      let velArray = textureVelocity.image.data;
+      return window.innerHeight / (Math.tan(THREE.Math.DEG2RAD * 0.5 * camera.fov) / camera.zoom);
 
-      // パーティクルの初期の位置は、ランダムなXZに平面おく。
-      // 板状の正方形が描かれる
-      for (let k = 0, kl = posArray.length; k < kl; k += 4) {
+    }
 
-        let x, y, z;
-        // x = 0.0;
-        // y = 0.0;
-        // z = 0.0;
-        x = Math.random() * 50 - 25;
-        y = Math.random() * 50 - 25;
-        z = Math.random() * 50 - 25;
+    // restart用関数 今回は使わない
+    // function restartSimulation() {
+    //   let dtPosition = gpuCompute.createTexture();
+    //   let dtVelocity = gpuCompute.createTexture();
+    //   fillTextures(dtPosition, dtVelocity);
+    //   gpuCompute.renderTexture(dtPosition, positionVariable.renderTargets[0]);
+    //   gpuCompute.renderTexture(dtPosition, positionVariable.renderTargets[1]);
+    //   gpuCompute.renderTexture(dtVelocity, velocityVariable.renderTargets[0]);
+    //   gpuCompute.renderTexture(dtVelocity, velocityVariable.renderTargets[1]);
+    // }
+
+
+
+
+    // ==================================================
+
+
+
+    function onRestart() {
+
+      console.log('onRestart');
+
+      let dtPosition = gpuCompute.createTexture();
+      let dtVelocity = gpuCompute.createTexture();
+      let posArray = dtPosition.image.data;
+      let velArray = dtVelocity.image.data;
+      // const tween = new TimelineMax();
+
+      for (let k = 0, kl = posArray.length; k < kl; k += 40) {
+
+        let x = Math.random() * 50 - 25;
+        let y = Math.random() * 50 - 25;
+        let z = Math.random() * 50 - 25;
 
         posArray[k + 0] = x;
         posArray[k + 1] = y;
         posArray[k + 2] = z;
         posArray[k + 3] = 0;
 
-        velArray[k + 0] = 0;
-        velArray[k + 1] = 0;
-        velArray[k + 2] = 0;
-        velArray[k + 3] = 0;
+        velArray[k + 0] = Math.random() * 1024.0 - 516;
+        velArray[k + 1] = Math.random() * 1024.0 - 516;
+        velArray[k + 2] = Math.random() * 1024.0 - 516;
+        velArray[k + 3] = Math.random() * 1024.0 - 516;
 
       }
 
+      gpuCompute.renderTexture(dtPosition, positionVariable.renderTargets[0]);
+      gpuCompute.renderTexture(dtPosition, positionVariable.renderTargets[1]);
+      gpuCompute.renderTexture(dtVelocity, velocityVariable.renderTargets[0]);
+      gpuCompute.renderTexture(dtVelocity, velocityVariable.renderTargets[1]);
+
     }
 
-    // カメラオブジェクトからシェーダーに渡したい情報を引っ張ってくる関数
-    // カメラからパーティクルがどれだけ離れてるかを計算し、パーティクルの大きさを決定するため。
-    let getCameraConstant = (camera) => {
-      return window.innerHeight / (Math.tan(THREE.Math.DEG2RAD * 0.5 * camera.fov) / camera.zoom);
-    }
+
+
+    // ==================================================
+
+
 
     // 画面がリサイズされたときの処理
     // ここでもシェーダー側に情報を渡す。
-    let onWindowResize = () => {
+    function onWindowResize() {
+
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -289,65 +361,35 @@
       particleUniforms.resolution.value.y = renderer.domElement.height;
 
       particleUniforms.cameraConstant.value = getCameraConstant(camera);
+
     }
 
-    let onMouseMove = (e) => {
+    function onMouseMove(e) {
+
       let x = event.clientX * 2.0 - window.innerWidth;
       let y = event.clientY * 2.0 - window.innerHeight;
       x /= window.innerWidth;
       y /= window.innerHeight;
       particleUniforms.mouse.value.x = e.pageX;
       particleUniforms.mouse.value.y = e.pageY;
+
     }
 
-    let onRestart = () => {
-      console.log('onRestart')
 
-      let dtPosition = gpuCompute.createTexture();
-      let dtVelocity = gpuCompute.createTexture();
-      let posArray = dtPosition.image.data;
-      let velArray = dtVelocity.image.data;
 
-      const tween = new TimelineMax();
+    // ==================================================
 
-      for (let k = 0, kl = posArray.length; k < kl; k += 40) {
 
-        let x, y, z;
-        // x = Math.random() * 500 - 250;
-        // y = Math.random() * 500 - 250;
-        // z = Math.random() * 500 - 250;
-        x = Math.random() * 50 - 25;
-        y = Math.random() * 50 - 25;
-        z = Math.random() * 50 - 25;
 
-        posArray[k + 0] = x;
-        posArray[k + 1] = y;
-        posArray[k + 2] = z;
-        posArray[k + 3] = 0;
+    function animate() {
 
-        // velArray[k + 0] = Math.random() * 2.0 - 1.0;
-        // velArray[k + 1] = Math.random() * 2.0 - 1.0;
-        // velArray[k + 2] = Math.random() * 2.0 - 1.0;
-        // velArray[k + 3] = Math.random() * 2.0 - 1.0;
-        velArray[k + 0] = Math.random() * 1024.0 - 516;
-        velArray[k + 1] = Math.random() * 1024.0 - 516;
-        velArray[k + 2] = Math.random() * 1024.0 - 516;
-        velArray[k + 3] = Math.random() * 1024.0 - 516;
-
-      }
-      gpuCompute.renderTexture(dtPosition, positionVariable.renderTargets[0]);
-      gpuCompute.renderTexture(dtPosition, positionVariable.renderTargets[1]);
-      gpuCompute.renderTexture(dtVelocity, velocityVariable.renderTargets[0]);
-      gpuCompute.renderTexture(dtVelocity, velocityVariable.renderTargets[1]);
-    }
-
-    let animate = () => {
       render();
       stats.update();
       requestAnimationFrame(animate);
+
     }
 
-    let render = () => {
+    function render() {
 
       count++;
       scene.rotation.x = count * 0.005;

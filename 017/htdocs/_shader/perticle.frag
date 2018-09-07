@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 
 uniform vec2 resolution;
 uniform vec2 mouse;
@@ -7,7 +7,7 @@ uniform float time;
 void main(void) {
 
   // 丸い形に色をぬるための計算
-  float f = length(gl_PointCoord - vec2(0.5, 0.5));
+  float f = length(gl_PointCoord - vec2(.5, .5));
   if (f > 0.1) {
     discard;
   }
@@ -18,6 +18,7 @@ void main(void) {
   // gl_FragColor = vec4(color, 1.0);
 
   // white
-  vec3 color = vec3(1.0, 1.0, 1.0);
-  gl_FragColor = vec4(color, 1.0);
+  vec3 color = vec3(1.);
+  gl_FragColor = vec4(color, 1.);
+
 }

@@ -259,6 +259,7 @@
     }
 
     let onRestart = () => {
+
       console.log('onRestart')
 
       let dtPosition = gpuCompute.createTexture();

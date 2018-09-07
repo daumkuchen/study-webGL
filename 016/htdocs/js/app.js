@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = "precision mediump float;\n\n// uniform vec2 resolution;\n// uniform vec2 mouse;\n// uniform float time;\n\nvoid main(void) {\n  // 丸い形に色をぬるための計算\n  float f = length(gl_PointCoord - vec2(0.5, 0.5));\n  if (f > 0.1) {\n    discard;\n  }\n  gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);\n}\n";
+module.exports = "precision mediump float;\n\n// uniform vec2 resolution;\n// uniform vec2 mouse;\n// uniform float time;\n\nvoid main(void) {\n\n  // 丸い形に色をぬるための計算\n  float f = length(gl_PointCoord - vec2(0.5, 0.5));\n  if (f > 0.1) {\n    discard;\n  }\n\n  gl_FragColor = vec4(1., 1., 1., 1.);\n}\n";
 
 },{}],2:[function(require,module,exports){
 module.exports = "// uniform vec2 resolution;\n// uniform vec2 mouse;\n// uniform float time;\n\nuniform sampler2D texturePosition;\nuniform float cameraConstant;\nuniform float density;\nvarying vec2 vUv;\nuniform float radius;\n\nvoid main(void) {\n  vec4 posTemp = texture2D(texturePosition, uv);\n  vec3 pos = posTemp.xyz;\n\n  // ポイントのサイズを決定\n  vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);\n  gl_PointSize = 0.5 * cameraConstant / (- mvPosition.z);\n\n  // uv情報の引き渡し\n  vUv = uv;\n\n  // 変換して格納\n  gl_Position = projectionMatrix * mvPosition;\n}\n";
@@ -277,6 +277,7 @@ module.exports = "precision mediump float;\n\n// 移動方向についていろ�
     };
 
     var onRestart = function onRestart() {
+
       console.log('onRestart');
 
       var dtPosition = gpuCompute.createTexture();
