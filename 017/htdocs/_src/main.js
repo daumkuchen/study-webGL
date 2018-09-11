@@ -15,7 +15,7 @@ import perticleFrag from './../_shader/perticle.frag';
   // 　　MAIN
   // ==================================================
 
-  window.addEventListener('load', function() {
+  window.addEventListener('load', function () {
 
 
     // ==================================================
@@ -274,7 +274,7 @@ import perticleFrag from './../_shader/perticle.frag';
       // material.extensions.drawBuffers = true;
 
       // let mesh = new THREE.Points(geometry, material);
-        let mesh = new THREE.Points(geometry, material);
+      let mesh = new THREE.Points(geometry, material);
 
       // mesh.matrixAutoUpdate = false;
       // mesh.updateMatrix();

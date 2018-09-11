@@ -8,7 +8,7 @@
     console.log('this browser does not support webGL')
   };
 
-  if(document.getElementsByTagName('html')[0].classList.contains('no-webgl')){
+  if (document.getElementsByTagName('html')[0].classList.contains('no-webgl')) {
     notWebGL();
   }
 
@@ -20,7 +20,7 @@
 
   // console.log(ubu.detect);
 
-  if(ubu.detect.browser.ie){
+  if (ubu.detect.browser.ie) {
     console.log('IEさん、動画テクスチャはちょっと…無理ですね…')
   }
 
@@ -28,7 +28,7 @@
   // 　　MAIN
   // ==================================================
 
-  window.addEventListener('load', function() {
+  window.addEventListener('load', function () {
 
     // ==================================================
     // 　　CLASS
@@ -71,7 +71,7 @@
     // 　　MOUSE
     // ==================================================
 
-    window.addEventListener('mousemove', function(e) {
+    window.addEventListener('mousemove', function (e) {
       let x = event.clientX * 2.0 - winWidth;
       let y = event.clientY * 2.0 - winHeight;
       x /= winWidth;
@@ -86,7 +86,7 @@
     // 　　RESIZE
     // ==================================================
 
-    window.addEventListener('resize', function() {
+    window.addEventListener('resize', function () {
       winWidth = window.innerWidth;
       winHeight = window.innerHeight;
 
@@ -103,7 +103,7 @@
       uniforms__POST.resolution.value.x = renderer.domElement.width;
       uniforms__POST.resolution.value.y = renderer.domElement.height;
 
-    }, false );
+    }, false);
 
     // ==================================================
     // 　　SCROLL
@@ -227,9 +227,9 @@
 
     // obj loader + material
     loader = new THREE.OBJLoader();
-    loader.load('./bunny.obj', function(object) {
-      object.traverse(function(object) {
-        if(object instanceof THREE.Mesh) {
+    loader.load('./bunny.obj', function (object) {
+      object.traverse(function (object) {
+        if (object instanceof THREE.Mesh) {
           // phong
           // object.material = new THREE.MeshPhongMaterial({
           //   color: 0xff0000,
@@ -249,12 +249,12 @@
       });
       scene.add(object);
     },
-    function(xhr) {
-      console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-    },
-    function(error) {
-      console.log('An error happened');
-    });
+      function (xhr) {
+        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+      },
+      function (error) {
+        console.log('An error happened');
+      });
 
     // json loader(not work)
     // loader = new THREE.JSONLoader();

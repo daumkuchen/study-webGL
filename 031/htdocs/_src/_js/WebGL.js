@@ -146,19 +146,19 @@ export default class Sample {
     this.plane = new Plane;
     this.plane.setup();
     // this.plane.mesh.position.z = -1.0;
-	
-	  // this.plane.mesh.position.x = 1.0;
-	  // this.plane.mesh.position.y = 1.0;
-	  // this.plane.mesh.position.z = 1.0;
-	
-	  // setTimeout(function () {
-		  this.scene.add(this.plane.mesh);
-	  // }, 2000);
-	  
-	  
-	  
-	  
-	  
+
+    // this.plane.mesh.position.x = 1.0;
+    // this.plane.mesh.position.y = 1.0;
+    // this.plane.mesh.position.z = 1.0;
+
+    // setTimeout(function () {
+    this.scene.add(this.plane.mesh);
+    // }, 2000);
+
+
+
+
+
   }
   createPost() {
     this.scenePost = new THREE.Scene();
@@ -175,11 +175,11 @@ export default class Sample {
     this.rendererPost = new THREE.WebGLRenderTarget(
       this.winWidth,
       this.winHeight, {
-      magFilter: THREE.NearestFilter,
-      minFilter: THREE.NearestFilter,
-      wrapS: THREE.ClampToEdgeWrapping,
-      wrapT: THREE.ClampToEdgeWrapping
-    });
+        magFilter: THREE.NearestFilter,
+        minFilter: THREE.NearestFilter,
+        wrapS: THREE.ClampToEdgeWrapping,
+        wrapT: THREE.ClampToEdgeWrapping
+      });
     this.rendererPost.setSize(this.winWidth * window.devicePixelRatio || 1, this.winHeight * window.devicePixelRatio || 1);
 
     this.post = new Post(this.rendererPost.texture);
@@ -194,11 +194,11 @@ export default class Sample {
     this.stats.domElement.style.top = '0px';
     document.body.appendChild(this.stats.domElement);
   }
-  datGUI () {
+  datGUI() {
 
     this.gui = new Dat.GUI();
 
-    const postColor = new function() {
+    const postColor = new function () {
       this.r = 1.0;
       this.g = 1.0;
       this.b = 1.0;
