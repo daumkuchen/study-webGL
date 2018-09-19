@@ -173,11 +173,11 @@ import perticleFrag from './../_shader/perticle.frag';
     }
 
     // テクスチャ定義
-    function fillTextures(texturePosition, textureVelocity) {
+    function fillTextures(tp, tv) {
 
       // textureのイメージデータをいったん取り出す
-      let posArray = texturePosition.image.data;
-      let velArray = textureVelocity.image.data;
+      let posArray = tp.image.data;
+      let velArray = tv.image.data;
 
       // パーティクルの初期の位置は、ランダムなXZに平面おく。
       // 板状の正方形が描かれる

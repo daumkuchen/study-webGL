@@ -188,11 +188,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 
     // テクスチャ定義
-    function fillTextures(texturePosition, textureVelocity) {
+    function fillTextures(tp, tv) {
 
       // textureのイメージデータをいったん取り出す
-      var posArray = texturePosition.image.data;
-      var velArray = textureVelocity.image.data;
+      var posArray = tp.image.data;
+      var velArray = tv.image.data;
 
       // パーティクルの初期の位置は、ランダムなXZに平面おく。
       // 板状の正方形が描かれる
